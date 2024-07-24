@@ -3,11 +3,10 @@ package com.ecommerce.app.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 
 import java.math.BigDecimal;
 
-@Builder
+
 public record ProductRequest(
         Long id,
         @NotNull(message = "product name shouldn't be null or empty")
