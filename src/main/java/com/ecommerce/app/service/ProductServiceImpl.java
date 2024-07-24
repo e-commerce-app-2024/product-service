@@ -1,5 +1,6 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.*;
 import com.ecommerce.app.exception.CategoryNotFoundException;
 import com.ecommerce.app.exception.ProductExistsException;
 import com.ecommerce.app.exception.ProductNotFoundException;
@@ -7,13 +8,13 @@ import com.ecommerce.app.exception.ProductPurchaseException;
 import com.ecommerce.app.mapper.ProductMapper;
 import com.ecommerce.app.model.CategoryEntity;
 import com.ecommerce.app.model.ProductEntity;
-import com.ecommerce.app.dto.ProductPurchaseRequest;
-import com.ecommerce.app.dto.ProductPurchaseResponse;
-import com.ecommerce.app.dto.ProductRequest;
-import com.ecommerce.app.dto.ProductResponse;
+import com.ecommerce.app.payload.PageResponse;
 import com.ecommerce.app.repo.CategoryRepo;
 import com.ecommerce.app.repo.ProductRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -43,13 +44,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getProductsByCategory(Long id) {
-        return productMapper.toProductResponse(productRepo.findByCategoryId(id));
-    }
-
-    @Override
-    public List<ProductResponse> getAllProducts() {
-        return productMapper.toProductResponse(productRepo.findAll());
+    public PageResponse<ProductResponse> getAllProducts(ProductFilterRequest request) {
+        Sort sort = Sort.by(request.sort() != null ? request.sort() : Sort.Direction.DESC, request.sortBy() != null ? request.sortBy() : "createdAt");
+        PageRequest pageRequest = PageRequest.of(request.index().intValue(), request.size().intValue(), sort);
+        Page<ProductEntity> all = request.categoryId() != null ? productRepo.findByCategoryId(request.categoryId(), pageRequest) : productRepo.findAll(pageRequest);
+        return new PageResponse<>
+                (productMapper.toProductResponse(all.getContent()),
+                        all.isLast(),
+                        all.getNumber(),
+                        all.getSize(),
+                        all.getTotalElements(),
+                        all.getTotalPages());
     }
 
     @Override

@@ -1,9 +1,7 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.dto.ProductPurchaseRequest;
-import com.ecommerce.app.dto.ProductPurchaseResponse;
-import com.ecommerce.app.dto.ProductRequest;
-import com.ecommerce.app.dto.ProductResponse;
+import com.ecommerce.app.dto.*;
+import com.ecommerce.app.payload.PageResponse;
 
 import java.util.List;
 
@@ -13,9 +11,7 @@ public interface ProductService {
 
     void deleteProduct(Long id);
 
-    List<ProductResponse> getProductsByCategory(Long id);
-
-    List<ProductResponse> getAllProducts();
+    PageResponse<ProductResponse> getAllProducts(ProductFilterRequest request);
 
     ProductResponse addProduct(ProductRequest productRequest);
 

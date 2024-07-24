@@ -1,11 +1,9 @@
 package com.ecommerce.app.controller;
 
 
+import com.ecommerce.app.dto.*;
 import com.ecommerce.app.payload.AppResponse;
-import com.ecommerce.app.dto.ProductPurchaseRequest;
-import com.ecommerce.app.dto.ProductPurchaseResponse;
-import com.ecommerce.app.dto.ProductRequest;
-import com.ecommerce.app.dto.ProductResponse;
+import com.ecommerce.app.payload.PageResponse;
 import com.ecommerce.app.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +39,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public AppResponse<List<ProductResponse>> getAllProducts() {
-        return AppResponse.ok(productService.getAllProducts());
-    }
-
-    @GetMapping("/category/{id}")
-    public AppResponse<List<ProductResponse>> getProductsByCategory(@PathVariable Long id) {
-        return AppResponse.ok(productService.getProductsByCategory(id));
+    public AppResponse<PageResponse<ProductResponse>> getAllProducts(@Valid @RequestBody ProductFilterRequest filterRequest) {
+        return AppResponse.ok(productService.getAllProducts(filterRequest));
     }
 
     @DeleteMapping("/{id}")
