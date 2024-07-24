@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="add_categories" author="Ahmed.Baz" labels="e-commerce-app">
+        <sql>
+            INSERT INTO CATEGORY (ID, NAME, DESCRIPTION)
+            VALUES (NEXTVAL('CATEGORY_SEQ'), 'Electronics', 'Consumer electronic products'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Clothing', 'Apparel and accessories'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Books', 'Literature and publications'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Home and Garden', 'Household items and outdoor supplies'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Sports and Outdoors', 'Athletic equipment and outdoor gear'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Toys and Games', 'Children''s toys and games'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Automotive', 'Vehicle parts and accessories'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Furniture', 'Home furnishings and decor'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Office Supplies', 'Stationery and office products'),
+                   (NEXTVAL('CATEGORY_SEQ'), 'Grocery', 'Food and beverage items')
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

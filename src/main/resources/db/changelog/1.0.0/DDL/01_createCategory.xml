@@ -1,0 +1,31 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_category" author="Ahmed.Baz" labels="e-commerce-app">
+        <sql>
+            CREATE TABLE CATEGORY
+            (
+                ID               INT8         NOT NULL,
+                NAME             VARCHAR(255) NOT NULL,
+                DESCRIPTION      VARCHAR(255),
+                CREATED_BY       INT8,
+                LAST_MODIFIED_BY INT8,
+                CREATED_AT       TIMESTAMP(6) DEFAULT CURRENT_DATE,
+                DELETED_AT       TIMESTAMP(6),
+                DELETED_BY       INT8,
+                LAST_MODIFIED_AT TIMESTAMP(6),
+                CONSTRAINT CATEGORY_ID_PKEY PRIMARY KEY (ID),
+                CONSTRAINT CATEGORY_NAME_UKEY UNIQUE (NAME)
+            );
+        </sql>
+        <sql>
+            CREATE SEQUENCE CATEGORY_SEQ
+                INCREMENT 1
+                START 1;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
