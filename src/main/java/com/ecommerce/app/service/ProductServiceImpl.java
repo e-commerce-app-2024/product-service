@@ -85,7 +85,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public synchronized List<ProductPurchaseResponse> purchaseProduct(List<ProductPurchaseRequest> productPurchaseRequests) {
+    public synchronized List<ProductPurchaseResponse> purchaseProduct(CreatePurchaseRequest createPurchaseRequest) {
+        List<ProductPurchaseRequest> productPurchaseRequests = createPurchaseRequest.purchaseList();
         List<Long> productIdList = productPurchaseRequests.stream().map(ProductPurchaseRequest::productId).toList();
         List<ProductEntity> updatedProducts = new ArrayList<>();
         List<ProductEntity> products = productRepo.findByIdInOrderById(productIdList);
