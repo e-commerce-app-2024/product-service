@@ -116,6 +116,7 @@ public class ProductServiceImpl implements ProductService {
                 .name(purchaseResponse.name())
                 .description(purchaseResponse.description())
                 .price(purchaseResponse.price())
+                .quantity(purchaseResponse.quantity())
                 .totalPrice(purchaseResponse.price().multiply(new BigDecimal(quantity))).build();
     }
 

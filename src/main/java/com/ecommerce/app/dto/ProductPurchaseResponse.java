@@ -10,6 +10,7 @@ public record ProductPurchaseResponse(
         String name,
         String description,
         BigDecimal price,
+        Long quantity,
         BigDecimal totalPrice
 ) {
 }
