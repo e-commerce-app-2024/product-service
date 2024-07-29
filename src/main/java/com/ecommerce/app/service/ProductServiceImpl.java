@@ -8,10 +8,14 @@ import com.ecommerce.app.exception.ProductPurchaseException;
 import com.ecommerce.app.mapper.ProductMapper;
 import com.ecommerce.app.model.CategoryEntity;
 import com.ecommerce.app.model.ProductEntity;
+import com.ecommerce.app.model.ProductView;
 import com.ecommerce.app.payload.PageResponse;
 import com.ecommerce.app.repo.CategoryRepo;
 import com.ecommerce.app.repo.ProductRepo;
+import com.ecommerce.app.repo.ProductViewRepo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,10 +27,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepo productRepo;
+    private final ProductViewRepo productViewRepo;
     private final CategoryRepo categoryRepo;
     private final ProductMapper productMapper;
 
@@ -41,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         getById(id);
         productRepo.deleteById(id);
+        refreshProductView();
     }
 
     @Override
@@ -58,6 +65,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public PageResponse<ProductViewResponse> getAllProducts(ProductFilterRequest request, boolean refreshView) {
+        if (refreshView) refreshProductView();
+        Sort sort = Sort.by(request.sort() != null ? request.sort() : Sort.Direction.DESC, request.sortBy() != null ? request.sortBy() : "createdAt");
+        PageRequest pageRequest = PageRequest.of(request.index().intValue(), request.size().intValue(), sort);
+        Page<ProductView> all = request.categoryId() != null ? productViewRepo.findByCategoryId(request.categoryId(), pageRequest) : productViewRepo.findAll(pageRequest);
+        return new PageResponse<>
+                (productMapper.fromProductView(all.getContent()),
+                        all.isLast(),
+                        all.getNumber(),
+                        all.getSize(),
+                        all.getTotalElements(),
+                        all.getTotalPages());
+    }
+
+    @Override
     public ProductResponse addProduct(ProductRequest productRequest) {
         var product = productMapper.toProduct(productRequest);
         var category = getCategoryById(productRequest.categoryId());
@@ -67,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setCategory(category);
         productRepo.save(product);
+        refreshProductView();
         return productMapper.toProductResponse(product);
     }
 
@@ -81,10 +104,12 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setCategory(category);
         productRepo.save(product);
+        refreshProductView();
         return productMapper.toProductResponse(product);
     }
 
     @Override
+    @Transactional
     public synchronized List<ProductPurchaseResponse> purchaseProduct(CreatePurchaseRequest createPurchaseRequest) {
         List<ProductPurchaseRequest> productPurchaseRequests = createPurchaseRequest.purchaseList();
         List<Long> productIdList = productPurchaseRequests.stream().map(ProductPurchaseRequest::productId).toList();
@@ -106,6 +131,7 @@ public class ProductServiceImpl implements ProductService {
             productPurchaseResponseList.add(prepareProductPurchaseResponse(product, request.quantity()));
         });
         productRepo.saveAll(updatedProducts);
+        refreshProductView();
         return productPurchaseResponseList;
     }
 
@@ -131,5 +157,13 @@ public class ProductServiceImpl implements ProductService {
 
     public CategoryEntity getCategoryById(Long id) {
         return categoryRepo.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+    }
+
+    private void refreshProductView() {
+        try {
+            productViewRepo.refreshProductView();
+        } catch (Exception ex) {
+            log.error("refreshProductView failed ", ex);
+        }
     }
 }

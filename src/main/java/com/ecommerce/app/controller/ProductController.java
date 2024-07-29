@@ -39,8 +39,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public AppResponse<PageResponse<ProductResponse>> getAllProducts(@Valid @RequestBody ProductFilterRequest filterRequest) {
-        return AppResponse.ok(productService.getAllProducts(filterRequest));
+    public AppResponse<PageResponse<ProductViewResponse>> getAllProducts(@Valid @RequestBody ProductFilterRequest filterRequest) {
+        return AppResponse.ok(productService.getAllProducts(filterRequest, false));
     }
 
     @DeleteMapping("/{id}")

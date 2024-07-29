@@ -13,6 +13,8 @@ public interface ProductService {
 
     PageResponse<ProductResponse> getAllProducts(ProductFilterRequest request);
 
+    PageResponse<ProductViewResponse> getAllProducts(ProductFilterRequest request, boolean refreshView);
+
     ProductResponse addProduct(ProductRequest productRequest);
 
     ProductResponse updateProduct(Long id, ProductRequest productRequest);

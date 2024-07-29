@@ -1,0 +1,28 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_product_materialized_view" author="Ahmed.Baz" labels="e-commerce-app">
+        <sql>
+            drop
+            materialized view if exists product_mv;
+            create
+            materialized view if not exists product_mv
+            as
+            select p.id,
+                   p.name,
+                   p.description,
+                   p.quantity,
+                   p.price,
+                   p.category_id,
+                   p.created_at,
+                   c.name as category_name
+            from product p
+                     inner join category c
+                                on p.category_id = c.id;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,9 +1,11 @@
 package com.ecommerce.app.mapper;
 
-import com.ecommerce.app.model.ProductEntity;
 import com.ecommerce.app.dto.ProductPurchaseResponse;
 import com.ecommerce.app.dto.ProductRequest;
 import com.ecommerce.app.dto.ProductResponse;
+import com.ecommerce.app.dto.ProductViewResponse;
+import com.ecommerce.app.model.ProductEntity;
+import com.ecommerce.app.model.ProductView;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -21,6 +23,8 @@ public interface ProductMapper {
     ProductResponse toProductResponse(ProductEntity product);
 
     List<ProductResponse> toProductResponse(List<ProductEntity> products);
+
+    List<ProductViewResponse> fromProductView(List<ProductView> products);
 
     ProductPurchaseResponse toProductPurchaseResponse(ProductEntity product);
 
