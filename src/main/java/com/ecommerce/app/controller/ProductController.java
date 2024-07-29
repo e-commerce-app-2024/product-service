@@ -6,11 +6,14 @@ import com.ecommerce.app.payload.AppResponse;
 import com.ecommerce.app.payload.PageResponse;
 import com.ecommerce.app.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/product")
 @RequiredArgsConstructor
@@ -36,6 +39,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public AppResponse<ProductResponse> getProductById(@PathVariable Long id) {
         return AppResponse.ok(productService.getProductById(id));
+    }
+
+    @GetMapping("/random/{size}")
+    public AppResponse<List<ProductResponse>> getRandomProducts(@PathVariable(name = "size") @Positive(message = "add valid size to get the random list") int size) {
+        return AppResponse.ok(productService.getRandomProducts(size));
     }
 
     @GetMapping

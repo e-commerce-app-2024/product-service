@@ -44,6 +44,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductResponse> getRandomProducts(int size) {
+        return productMapper.toProductResponse(productRepo.getRandomProducts(size));
+    }
+
+    @Override
     public void deleteProduct(Long id) {
         getById(id);
         productRepo.deleteById(id);
