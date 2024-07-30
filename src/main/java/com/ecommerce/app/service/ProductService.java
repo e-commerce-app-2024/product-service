@@ -21,5 +21,5 @@ public interface ProductService {
 
     ProductResponse updateProduct(Long id, ProductRequest productRequest);
 
-    List<ProductPurchaseResponse> purchaseProduct(CreatePurchaseRequest request);
+    PurchaseResponse purchaseProduct(CreatePurchaseRequest request);
 }

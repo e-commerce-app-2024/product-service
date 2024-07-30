@@ -27,7 +27,7 @@ public class ProductController {
     }
 
     @PostMapping("/purchase")
-    public AppResponse<List<ProductPurchaseResponse>> purchaseProduct(@Valid @RequestBody CreatePurchaseRequest request) {
+    public AppResponse<PurchaseResponse> purchaseProduct(@Valid @RequestBody CreatePurchaseRequest request) {
         return AppResponse.created(productService.purchaseProduct(request));
     }
 

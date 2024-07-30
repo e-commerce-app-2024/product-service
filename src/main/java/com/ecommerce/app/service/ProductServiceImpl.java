@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -115,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public synchronized List<ProductPurchaseResponse> purchaseProduct(CreatePurchaseRequest createPurchaseRequest) {
+    public synchronized PurchaseResponse purchaseProduct(CreatePurchaseRequest createPurchaseRequest) {
         List<ProductPurchaseRequest> productPurchaseRequests = createPurchaseRequest.purchaseList();
         List<Long> productIdList = productPurchaseRequests.stream().map(ProductPurchaseRequest::productId).toList();
         List<ProductEntity> updatedProducts = new ArrayList<>();
@@ -137,7 +138,10 @@ public class ProductServiceImpl implements ProductService {
         });
         productRepo.saveAll(updatedProducts);
         refreshProductView();
-        return productPurchaseResponseList;
+        return PurchaseResponse.builder()
+                .products(productPurchaseResponseList)
+                .requestId(UUID.randomUUID().toString())
+                .build();
     }
 
     private ProductPurchaseResponse prepareProductPurchaseResponse(ProductEntity product, Long quantity) {

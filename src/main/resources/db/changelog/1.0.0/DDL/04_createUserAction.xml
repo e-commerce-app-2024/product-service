@@ -1,0 +1,29 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_user_action" author="Ahmed.Baz" labels="e-commerce-app">
+        <sql>
+            CREATE TABLE USER_ACTION
+            (
+                ID             BIGSERIAL     NOT NULL,
+                ACTION_TYPE    VARCHAR(255)  NOT NULL,
+                REQUEST_BODY   VARCHAR(4000) NOT NULL,
+                SUCCESS        BOOL DEFAULT FALSE,
+                ERROR_CODE     VARCHAR(255),
+                IS_ROLLED_BACK BOOL DEFAULT FALSE,
+                REQUEST_ID     VARCHAR(255),
+                CREATED_AT     TIMESTAMP(6)  NOT NULL,
+                CONSTRAINT USER_ACTION_PKEY PRIMARY KEY (ID)
+            );
+        </sql>
+        <sql>
+            CREATE SEQUENCE USER_ACTION_SEQ
+                INCREMENT 1
+                START 1;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
