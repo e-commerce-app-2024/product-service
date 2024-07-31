@@ -28,7 +28,8 @@ public class ProductController {
 
     @PostMapping("/purchase")
     public AppResponse<PurchaseResponse> purchaseProduct(@Valid @RequestBody CreatePurchaseRequest request) {
-        return AppResponse.created(productService.purchaseProduct(request));
+        PurchaseResponse purchaseResponse = productService.purchaseProduct(request);
+        return AppResponse.created(purchaseResponse, purchaseResponse.requestId());
     }
 
     @PutMapping("/{id}")
