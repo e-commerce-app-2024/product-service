@@ -9,12 +9,17 @@ import com.ecommerce.app.mapper.ProductMapper;
 import com.ecommerce.app.model.CategoryEntity;
 import com.ecommerce.app.model.ProductEntity;
 import com.ecommerce.app.model.ProductView;
+import com.ecommerce.app.model.UserActionEntity;
 import com.ecommerce.app.payload.PageResponse;
 import com.ecommerce.app.repo.CategoryRepo;
 import com.ecommerce.app.repo.ProductRepo;
 import com.ecommerce.app.repo.ProductViewRepo;
+import com.ecommerce.app.repo.UserActionRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.fasterxml.jackson.core.JsonParser.Feature.AUTO_CLOSE_SOURCE;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -36,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductViewRepo productViewRepo;
     private final CategoryRepo categoryRepo;
     private final ProductMapper productMapper;
+    private final UserActionRepo userActionRepo;
 
     @Override
     public ProductResponse getProductById(Long id) {
@@ -142,6 +150,27 @@ public class ProductServiceImpl implements ProductService {
                 .products(productPurchaseResponseList)
                 .requestId(UUID.randomUUID().toString())
                 .build();
+    }
+
+    @Override
+    public void rollbackPurchase(String requestId) {
+        try {
+            Optional<UserActionEntity> userAction = userActionRepo.findByRequestIdAndIsRolledBackAndSuccess(requestId, false, true);
+            if (userAction.isPresent()) {
+                CreatePurchaseRequest createPurchaseRequest = parseRequestBody(userAction.get().getRequestBody());
+                log.info(createPurchaseRequest.purchaseList().size());
+            }
+        } catch (Exception ex) {
+            log.error("rollback purchase for REQUEST ID: {} failed", requestId);
+        }
+    }
+
+    @SneakyThrows
+    private CreatePurchaseRequest parseRequestBody(String requestBody) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(AUTO_CLOSE_SOURCE, true);
+        return mapper.readValue(requestBody, CreatePurchaseRequest.class);
     }
 
     private ProductPurchaseResponse prepareProductPurchaseResponse(ProductEntity product, Long quantity) {

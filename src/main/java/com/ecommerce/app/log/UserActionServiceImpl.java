@@ -1,7 +1,6 @@
 package com.ecommerce.app.log;
 
 
-import com.ecommerce.app.dto.CreatePurchaseRequest;
 import com.ecommerce.app.dto.PurchaseResponse;
 import com.ecommerce.app.enums.UserActionEnum;
 import com.ecommerce.app.model.UserActionEntity;
@@ -61,11 +60,4 @@ public class UserActionServiceImpl implements UserActionService {
         return mapper.readValue(responseBody, typeReference);
     }
 
-    @SneakyThrows
-    private CreatePurchaseRequest parseRequestBody(String requestBody) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(AUTO_CLOSE_SOURCE, true);
-        return mapper.readValue(requestBody, CreatePurchaseRequest.class);
-    }
 }

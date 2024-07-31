@@ -22,4 +22,6 @@ public interface ProductService {
     ProductResponse updateProduct(Long id, ProductRequest productRequest);
 
     PurchaseResponse purchaseProduct(CreatePurchaseRequest request);
+
+    void rollbackPurchase(String requestId);
 }
