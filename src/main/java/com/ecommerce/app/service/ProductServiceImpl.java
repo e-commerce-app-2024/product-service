@@ -157,8 +157,22 @@ public class ProductServiceImpl implements ProductService {
         try {
             Optional<UserActionEntity> userAction = userActionRepo.findByRequestIdAndIsRolledBackAndSuccess(requestId, false, true);
             if (userAction.isPresent()) {
-                CreatePurchaseRequest createPurchaseRequest = parseRequestBody(userAction.get().getRequestBody());
-                log.info(createPurchaseRequest.purchaseList().size());
+                UserActionEntity userActionEntity = userAction.get();
+                CreatePurchaseRequest createPurchaseRequest = parseRequestBody(userActionEntity.getRequestBody());
+                log.info("rollback product purchase for list <{}>", userActionEntity.getRequestBody());
+                List<ProductPurchaseRequest> products = createPurchaseRequest.purchaseList();
+                for (ProductPurchaseRequest requestProduct : products) {
+                    Optional<ProductEntity> productEntity = productRepo.findById(requestProduct.productId());
+                    if (productEntity.isPresent()) {
+                        ProductEntity originalProduct = productEntity.get();
+                        Long quantity = originalProduct.getQuantity();
+                        quantity += requestProduct.quantity();
+                        originalProduct.setQuantity(quantity);
+                        productRepo.save(originalProduct);
+                    }
+                }
+                userActionEntity.setIsRolledBack(true);
+                userActionRepo.save(userActionEntity);
             }
         } catch (Exception ex) {
             log.error("rollback purchase for REQUEST ID: {} failed", requestId);
