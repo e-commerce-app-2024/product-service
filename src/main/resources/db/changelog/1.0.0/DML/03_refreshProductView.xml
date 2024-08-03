@@ -1,0 +1,14 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="refresh_product_materialized_view" author="Ahmed.Baz" labels="e-commerce-app">
+        <sql>
+            REFRESH
+            MATERIALIZED VIEW PRODUCT_MV
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

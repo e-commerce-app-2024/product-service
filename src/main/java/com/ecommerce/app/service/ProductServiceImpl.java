@@ -195,7 +195,8 @@ public class ProductServiceImpl implements ProductService {
                 .description(purchaseResponse.description())
                 .price(purchaseResponse.price())
                 .quantity(quantity)
-                .totalPrice(purchaseResponse.price().multiply(new BigDecimal(quantity))).build();
+                .totalPrice(purchaseResponse.price().multiply(new BigDecimal(quantity)).setScale(2, BigDecimal.ROUND_HALF_UP))
+                .build();
     }
 
     private ProductEntity findProduct(Long id, List<ProductEntity> products) {
