@@ -9,6 +9,8 @@ public interface ProductService {
 
     ProductResponse getProductById(Long id);
 
+    List<ProductInfoResponse> getProductsInfo(List<Long> ids);
+
     List<ProductResponse> getRandomProducts(int size);
 
     void deleteProduct(Long id);

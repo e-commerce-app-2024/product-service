@@ -53,6 +53,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductInfoResponse> getProductsInfo(List<Long> ids) {
+        List<ProductEntity> products = productRepo.findByIdInOrderById(ids);
+        return productMapper.toProductInfoResponse(products);
+    }
+
+    @Override
     public List<ProductResponse> getRandomProducts(int size) {
         return productMapper.toProductResponse(productRepo.getRandomProducts(size));
     }

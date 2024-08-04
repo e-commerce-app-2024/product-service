@@ -26,6 +26,11 @@ public class ProductController {
         return AppResponse.created(productService.addProduct(request));
     }
 
+    @PostMapping("/info")
+    public AppResponse<List<ProductInfoResponse>> getProductsInfo(@RequestBody List<Long> ids) {
+        return AppResponse.created(productService.getProductsInfo(ids));
+    }
+
     @PostMapping("/purchase")
     public AppResponse<PurchaseResponse> purchaseProduct(@Valid @RequestBody CreatePurchaseRequest request) {
         PurchaseResponse purchaseResponse = productService.purchaseProduct(request);
