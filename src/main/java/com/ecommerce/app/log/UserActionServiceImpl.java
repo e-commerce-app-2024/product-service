@@ -33,7 +33,6 @@ public class UserActionServiceImpl implements UserActionService {
         UserActionEntity userActionEntity = UserActionEntity.builder()
                 .actionType(userAction)
                 .requestBody(requestBody)
-                .isRolledBack(false)
                 .build();
 
         AppResponse<PurchaseResponse> appResponse = parseResponseBody(responseBody);

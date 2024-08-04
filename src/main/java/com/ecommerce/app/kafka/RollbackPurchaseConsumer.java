@@ -20,4 +20,10 @@ public class RollbackPurchaseConsumer {
         productService.rollbackPurchase(requestId);
     }
 
+    @KafkaListener(topics = "delete_purchase_log", groupId = "delete_purchase_log")
+    public void deletePurchaseLog(String requestId) {
+        log.info("consume the message from delete_purchase_log-topic :: {}", requestId);
+        productService.deletePurchaseLog(requestId);
+    }
+
 }

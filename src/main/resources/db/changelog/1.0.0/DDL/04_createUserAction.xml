@@ -8,14 +8,13 @@
         <sql>
             CREATE TABLE USER_ACTION
             (
-                ID             BIGSERIAL     NOT NULL,
-                ACTION_TYPE    VARCHAR(255)  NOT NULL,
-                REQUEST_BODY   VARCHAR(4000) NOT NULL,
-                SUCCESS        BOOL DEFAULT FALSE,
-                ERROR_CODE     VARCHAR(255),
-                IS_ROLLED_BACK BOOL DEFAULT FALSE,
-                REQUEST_ID     VARCHAR(255),
-                CREATED_AT     TIMESTAMP(6)  NOT NULL,
+                ID           BIGSERIAL     NOT NULL,
+                ACTION_TYPE  VARCHAR(255)  NOT NULL,
+                REQUEST_BODY VARCHAR(4000) NOT NULL,
+                SUCCESS      BOOL DEFAULT FALSE,
+                ERROR_CODE   VARCHAR(255),
+                REQUEST_ID   VARCHAR(255),
+                CREATED_AT   TIMESTAMP(6)  NOT NULL,
                 CONSTRAINT USER_ACTION_PKEY PRIMARY KEY (ID)
             );
         </sql>

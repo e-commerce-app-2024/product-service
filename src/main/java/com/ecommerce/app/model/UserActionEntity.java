@@ -30,8 +30,6 @@ public class UserActionEntity {
     private String errorCode;
     @CreationTimestamp
     private Timestamp createdAt;
-    @Column(name = "IS_ROLLED_BACK")
-    private Boolean isRolledBack;
     private String requestId;
 
 }

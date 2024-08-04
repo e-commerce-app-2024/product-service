@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UserActionRepo extends BaseRepo<UserActionEntity> {
 
-    Optional<UserActionEntity> findByRequestIdAndIsRolledBackAndSuccess(String requestId, boolean isRolledBack, boolean isSuccess);
+    Optional<UserActionEntity> findByRequestIdAndSuccess(String requestId, boolean isSuccess);
+
+    int deleteByRequestId(String requestId);
 }
