@@ -178,7 +178,6 @@ public class ProductServiceImpl implements ProductService {
                         productRepo.save(originalProduct);
                     }
                 }
-                userActionRepo.deleteByRequestId(requestId);
             }
         } catch (Exception ex) {
             log.error("rollback purchase for REQUEST ID: {} failed", requestId);
@@ -187,11 +186,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void deletePurchaseLog(String requestId) {
+    public void rollbackPurchase(PurchaseResponse purchaseResponse) {
         try {
-            userActionRepo.deleteByRequestId(requestId);
+            for (ProductPurchaseResponse requestProduct : purchaseResponse.products()) {
+                Optional<ProductEntity> productEntity = productRepo.findById(requestProduct.id());
+                if (productEntity.isPresent()) {
+                    ProductEntity originalProduct = productEntity.get();
+                    Long quantity = originalProduct.getQuantity();
+                    quantity += requestProduct.quantity();
+                    originalProduct.setQuantity(quantity);
+                    productRepo.save(originalProduct);
+                }
+            }
         } catch (Exception ex) {
-            log.error("delete purchase log for REQUEST ID: {} failed", requestId);
+            log.error("rollback products failed", ex);
         }
     }
 

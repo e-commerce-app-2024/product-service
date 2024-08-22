@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.HttpMethod;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -22,6 +23,8 @@ import java.io.IOException;
 public class HttpLoggingFilter extends GenericFilterBean {
 
     private final UserActionService userActionService;
+    @Value("${user-action.save}")
+    private boolean saveAction;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -34,7 +37,7 @@ public class HttpLoggingFilter extends GenericFilterBean {
             url = ((HttpServletRequest) request).getRequestURL().toString();
             method = ((HttpServletRequest) request).getMethod().toString();
         }
-        if (url.endsWith("/purchase") && HttpMethod.POST.equals(method)) {
+        if (url.endsWith("/purchase") && HttpMethod.POST.equals(method) && saveAction) {
             userActionService.saveUserAction(UserActionEnum.PURCHASE_PRODUCT, new String(requestWrapper.getContentAsByteArray()), new String(responseWrapper.getContentAsByteArray()));
         }
         responseWrapper.copyBodyToResponse();

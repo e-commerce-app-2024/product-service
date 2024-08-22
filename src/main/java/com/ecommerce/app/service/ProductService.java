@@ -27,5 +27,6 @@ public interface ProductService {
 
     void rollbackPurchase(String requestId);
 
-    void deletePurchaseLog(String requestId);
+    void rollbackPurchase(PurchaseResponse purchaseResponse);
+
 }
