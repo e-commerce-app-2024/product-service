@@ -15,6 +15,7 @@ import com.ecommerce.app.repo.CategoryRepo;
 import com.ecommerce.app.repo.ProductRepo;
 import com.ecommerce.app.repo.ProductViewRepo;
 import com.ecommerce.app.repo.UserActionRepo;
+import com.ecommerce.app.security.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.transaction.Transactional;
@@ -44,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepo categoryRepo;
     private final ProductMapper productMapper;
     private final UserActionRepo userActionRepo;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Override
     public ProductResponse getProductById(Long id) {
@@ -155,6 +157,7 @@ public class ProductServiceImpl implements ProductService {
         return PurchaseResponse.builder()
                 .products(productPurchaseResponseList)
                 .requestId(UUID.randomUUID().toString())
+                .token(JwtTokenUtil.generateToken(createPurchaseRequest.userName(), UUID.randomUUID().toString()))
                 .build();
     }
 
@@ -187,19 +190,22 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void rollbackPurchase(PurchaseResponse purchaseResponse) {
-        try {
-            for (ProductPurchaseResponse requestProduct : purchaseResponse.products()) {
-                Optional<ProductEntity> productEntity = productRepo.findById(requestProduct.id());
-                if (productEntity.isPresent()) {
-                    ProductEntity originalProduct = productEntity.get();
-                    Long quantity = originalProduct.getQuantity();
-                    quantity += requestProduct.quantity();
-                    originalProduct.setQuantity(quantity);
-                    productRepo.save(originalProduct);
+        boolean tokenValid = jwtTokenUtil.isTokenValid(purchaseResponse.token(), purchaseResponse.userName());
+        if (tokenValid) {
+            try {
+                for (ProductPurchaseResponse requestProduct : purchaseResponse.products()) {
+                    Optional<ProductEntity> productEntity = productRepo.findById(requestProduct.id());
+                    if (productEntity.isPresent()) {
+                        ProductEntity originalProduct = productEntity.get();
+                        Long quantity = originalProduct.getQuantity();
+                        quantity += requestProduct.quantity();
+                        originalProduct.setQuantity(quantity);
+                        productRepo.save(originalProduct);
+                    }
                 }
+            } catch (Exception ex) {
+                log.error("rollback products failed", ex);
             }
-        } catch (Exception ex) {
-            log.error("rollback products failed", ex);
         }
     }
 
