@@ -1,5 +1,6 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.cache.CacheManagerService;
 import com.ecommerce.app.dto.*;
 import com.ecommerce.app.exception.CategoryNotFoundException;
 import com.ecommerce.app.exception.ProductExistsException;
@@ -46,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final UserActionRepo userActionRepo;
     private final JwtTokenUtil jwtTokenUtil;
+    private final CacheManagerService cacheManagerService;
 
     @Override
     public ProductResponse getProductById(Long id) {
@@ -127,7 +129,12 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(category);
         productRepo.save(product);
         refreshProductView();
+        doAfterUpdate(id);
         return productMapper.toProductResponse(product);
+    }
+
+    private void doAfterUpdate(Long id) {
+        cacheManagerService.clearCacheByName("productsInfo");
     }
 
     @Override
